@@ -1,0 +1,16 @@
+[project]
+name = "dbt-skills-taxonomy"
+version = "0.1.0"
+description = "dbt project for building a normalized skills taxonomy in PostgreSQL"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dbt-core>=1.8,<2",
+    "dbt-postgres>=1.8,<2",
+    "pre-commit>=4,<5",
+    "sqlfluff>=3,<4",
+    "sqlfluff-templater-dbt>=3,<4",
+]
+
+[tool.uv]
+package = false

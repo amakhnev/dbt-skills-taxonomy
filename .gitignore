@@ -1,0 +1,25 @@
+.prd/
+
+# Python / uv
+.venv/
+__pycache__/
+*.py[cod]
+.python-version
+
+# Environment files
+.env
+profiles.yml
+
+# dbt artifacts
+target/
+dbt_packages/
+logs/
+
+# Local source data cache (keep folder structure)
+data/*
+!data/.gitkeep
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+
