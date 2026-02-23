@@ -126,9 +126,9 @@ uv run dbt test --profiles-dir .
 * `models/staging/` - Source-specific staging models (one subfolder per source)
 * `models/intermediate/` - Cross-source merge and deduplication logic
 * `models/marts/` - Final API-facing tables (`dim_*`, `bridge_*`)
-* `seeds/` - Small curated datasets and example fixtures
-* `macros/` - Reusable dbt macros (e.g., slug generation)
-* `tests/` - Singular data tests
+* `seeds/example/` - Fictional Mind Management Institute dataset (PRD-03)
+* `macros/` - Reusable dbt macros
+* `tests/` - Singular data tests (self-loops, range checks, preferred synonyms)
 * `scripts/` - Python scripts to load external source files into `raw.*`
 * `data/` - Source files (gitignored)
 
