@@ -8,5 +8,15 @@ skills_taxonomy:
       user: "{{ env_var('DB_USER', 'postgres') }}"
       password: "{{ env_var('DB_PASSWORD', 'postgres') }}"
       dbname: "{{ env_var('DB_NAME', 'skills_taxonomy') }}"
-      schema: public
+      schema: skills
+      threads: 4
+
+    prod:
+      type: postgres
+      host: "{{ env_var('PROD_DB_HOST') }}"
+      port: "{{ env_var('PROD_DB_PORT', '5432') | int }}"
+      user: "{{ env_var('PROD_DB_USER') }}"
+      password: "{{ env_var('PROD_DB_PASSWORD') }}"
+      dbname: "{{ env_var('PROD_DB_NAME', 'skills_taxonomy') }}"
+      schema: skills
       threads: 4

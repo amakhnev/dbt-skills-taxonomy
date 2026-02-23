@@ -141,6 +141,102 @@ uv run dbt test --profiles-dir .
 5. Update intermediate merge models to union/deduplicate with existing sources.
 6. Extend marts and tests to validate the new source contributions.
 
+## Deploying to Production
+
+### 1) Add the production profile
+
+Copy `profiles.yml.example` and ensure the `prod` target is configured.
+The example file already includes a `prod` output that reads from environment variables:
+
+```yaml
+prod:
+  type: postgres
+  host: "{{ env_var('PROD_DB_HOST') }}"
+  port: "{{ env_var('PROD_DB_PORT', '5432') | int }}"
+  user: "{{ env_var('PROD_DB_USER') }}"
+  password: "{{ env_var('PROD_DB_PASSWORD') }}"
+  dbname: "{{ env_var('PROD_DB_NAME', 'skills_taxonomy') }}"
+  schema: skills
+  threads: 4
+```
+
+Set the environment variables before running any commands:
+
+```bash
+export PROD_DB_HOST=your-prod-host
+export PROD_DB_PORT=5432
+export PROD_DB_USER=your-prod-user
+export PROD_DB_PASSWORD=your-prod-password
+export PROD_DB_NAME=skills_taxonomy
+```
+
+### 2) Prepare data files
+
+Before deploying, ensure all required source data is in place:
+
+| Source | Files | Location |
+|--------|-------|----------|
+| Example seeds | Included in repo | `seeds/example/*.csv` |
+| Lightcast | `lightcast_<version>.json` + `import_meta.json` | `data/lightcast/` |
+| MIND Ontology | `__aggregated_skills.json` + `__aggregated_concepts.json` | `data/mind/` |
+
+For the initial deployment only the example seeds are required. Lightcast and MIND
+files should be loaded via their respective scripts before running dbt (see sections above).
+
+### 3) Incremental deploy (safe, no data loss)
+
+This is the default mode. Staging and intermediate models are views (always recreated).
+Marts tables are rebuilt via `create table as` but **do not drop upstream raw/seed data**.
+
+```bash
+# Install packages
+uv run dbt deps --profiles-dir . --target prod
+
+# Load seed data (inserts only, does not drop existing seed tables)
+uv run dbt seed --profiles-dir . --target prod
+
+# Build all models
+uv run dbt run --profiles-dir . --target prod
+
+# Validate
+uv run dbt test --profiles-dir . --target prod
+```
+
+This is safe to run repeatedly. Seeds use `INSERT` by default and marts tables are
+replaced atomically (`CREATE OR REPLACE` / `DROP + CREATE` within a transaction).
+
+### 4) Full refresh (destructive rebuild)
+
+Use this when seed schemas have changed, column types were updated, or you want to
+guarantee a clean slate. This **drops and recreates** all seed tables and marts tables.
+
+```bash
+# Full-refresh seeds (drops + recreates seed tables)
+uv run dbt seed --profiles-dir . --target prod --full-refresh
+
+# Full-refresh models (drops + recreates all tables)
+uv run dbt run --profiles-dir . --target prod --full-refresh
+
+# Validate
+uv run dbt test --profiles-dir . --target prod
+```
+
+**Warning:** `--full-refresh` on seeds will delete and reload all seed data. If you have
+external loaders writing to raw tables (Lightcast, MIND), those are unaffected since they
+live in separate schemas. Only seed-managed tables in the `seeds` schema are reset.
+
+### 5) Dry run (preview without applying)
+
+To see what dbt would do without touching the database:
+
+```bash
+uv run dbt compile --profiles-dir . --target prod
+```
+
+This generates compiled SQL in `target/compiled/` for review.
+
+---
+
 ## Development Workflow
 
 1. `uv sync`
