@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run dbt compile:*)",
+      "Bash(ren:*)",
+      "Bash(ren \"C:\\\\Users\\\\Admin\\\\Projects\\\\dbt-skills-taxonomy\\\\seeds\\\\tenant_capability_visibility.csv\" \"seed_tenant_capability_visibility.csv\")"
+    ]
+  }
+}

@@ -1,0 +1,310 @@
+version: 2
+
+models:
+  - name: dim_skills
+    description: "Canonical skills with lifecycle state."
+    columns:
+      - name: skill_id
+        description: "Stable internal ID (slug from canonical name)."
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: "Canonical display name."
+        tests:
+          - not_null
+      - name: skill_type
+        description: "hard or soft."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["hard", "soft"]
+      - name: lifecycle_state
+        description: "draft, published, deprecated, or suppressed."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["draft", "published", "deprecated", "suppressed"]
+      - name: created_at
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+
+  - name: dim_skill_synonyms
+    description: "Text variants that match to the same canonical skill."
+    columns:
+      - name: skill_id
+        description: "References dim_skills."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_skills')
+                field: skill_id
+      - name: synonym
+        description: "Normalised synonym text (lowercase/trimmed)."
+        tests:
+          - not_null
+      - name: is_preferred
+        description: "True for the canonical display synonym."
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - skill_id
+              - synonym
+
+  - name: dim_skill_redirects
+    description: "Mappings from obsolete/duplicate skill IDs to canonical IDs."
+    columns:
+      - name: from_skill_id
+        description: "Old/duplicate skill ID."
+        tests:
+          - not_null
+          - unique
+      - name: to_skill_id
+        description: "Canonical skill ID to redirect to."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_skills')
+                field: skill_id
+      - name: reason
+        description: "duplicate, renamed, merged, or standardised."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["duplicate", "renamed", "merged", "standardised"]
+      - name: created_at
+        tests:
+          - not_null
+
+  - name: bridge_skill_implies
+    description: "Directed inference edges for implied skill expansion."
+    columns:
+      - name: from_skill_id
+        description: "Observed skill (e.g. django)."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_skills')
+                field: skill_id
+      - name: to_skill_id
+        description: "Implied skill (e.g. python)."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_skills')
+                field: skill_id
+      - name: strength
+        description: "Confidence 0.00-1.00."
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+      - name: lifecycle_state
+        description: "published, deprecated, or suppressed."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["published", "deprecated", "suppressed"]
+      - name: created_at
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - from_skill_id
+              - to_skill_id
+
+  - name: dim_capabilities
+    description: "Scored capability concepts derived from weighted skills."
+    columns:
+      - name: capability_id
+        description: "Stable internal ID."
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: "Display name."
+        tests:
+          - not_null
+      - name: lifecycle_state
+        description: "draft, published, deprecated, or suppressed."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["draft", "published", "deprecated", "suppressed"]
+      - name: created_at
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+
+  - name: bridge_capability_skills
+    description: "Weighted skill-to-capability mappings for scoring."
+    columns:
+      - name: capability_id
+        description: "References dim_capabilities."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_capabilities')
+                field: capability_id
+      - name: skill_id
+        description: "References dim_skills (canonical)."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_skills')
+                field: skill_id
+      - name: weight
+        description: "Relevance weight 0.00-1.00."
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - capability_id
+              - skill_id
+
+  - name: dim_skill_sources
+    description: "Source traceability for canonical skills."
+    columns:
+      - name: skill_id
+        description: "Canonical skill ID."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_skills')
+                field: skill_id
+      - name: source
+        tests:
+          - not_null
+      - name: source_id
+        tests:
+          - not_null
+      - name: imported_at
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - skill_id
+              - source
+
+  - name: dim_capability_sources
+    description: "Source traceability for capabilities."
+    columns:
+      - name: capability_id
+        description: "Canonical capability ID."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_capabilities')
+                field: capability_id
+      - name: source
+        tests:
+          - not_null
+      - name: source_id
+        tests:
+          - not_null
+      - name: imported_at
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - capability_id
+              - source
+
+  - name: tenant_skill_visibility
+    description: "Per-tenant skill visibility overrides."
+    columns:
+      - name: tenant_id
+        tests:
+          - not_null
+      - name: skill_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_skills')
+                field: skill_id
+      - name: visibility_state
+        description: "enabled or hidden."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["enabled", "hidden"]
+      - name: updated_at
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - tenant_id
+              - skill_id
+
+  - name: tenant_capability_visibility
+    description: "Per-tenant capability visibility overrides."
+    columns:
+      - name: tenant_id
+        tests:
+          - not_null
+      - name: capability_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_capabilities')
+                field: capability_id
+      - name: visibility_state
+        description: "enabled or hidden."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["enabled", "hidden"]
+      - name: updated_at
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - tenant_id
+              - capability_id

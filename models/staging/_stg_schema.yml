@@ -1,0 +1,141 @@
+version: 2
+
+models:
+  - name: stg_skills
+    description: "Cleaned skills from seed data."
+    columns:
+      - name: skill_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_skill_synonyms
+    description: "Cleaned skill synonyms from seed data."
+    columns:
+      - name: skill_id
+        tests:
+          - not_null
+      - name: synonym
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - skill_id
+              - synonym
+
+  - name: stg_skill_redirects
+    description: "Cleaned skill redirects from seed data."
+    columns:
+      - name: from_skill_id
+        tests:
+          - not_null
+          - unique
+      - name: to_skill_id
+        tests:
+          - not_null
+
+  - name: stg_skill_implies
+    description: "Cleaned skill implication edges from seed data."
+    columns:
+      - name: from_skill_id
+        tests:
+          - not_null
+      - name: to_skill_id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - from_skill_id
+              - to_skill_id
+
+  - name: stg_capabilities
+    description: "Cleaned capabilities from seed data."
+    columns:
+      - name: capability_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_capability_skills
+    description: "Cleaned capability-skill mappings from seed data."
+    columns:
+      - name: capability_id
+        tests:
+          - not_null
+      - name: skill_id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - capability_id
+              - skill_id
+
+  - name: stg_skill_sources
+    description: "Cleaned skill source traceability from seed data."
+    columns:
+      - name: skill_id
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - skill_id
+              - source
+
+  - name: stg_capability_sources
+    description: "Cleaned capability source traceability from seed data."
+    columns:
+      - name: capability_id
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - capability_id
+              - source
+
+  - name: stg_tenant_skill_visibility
+    description: "Cleaned tenant skill visibility overrides from seed data."
+    columns:
+      - name: tenant_id
+        tests:
+          - not_null
+      - name: skill_id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - tenant_id
+              - skill_id
+
+  - name: stg_tenant_capability_visibility
+    description: "Cleaned tenant capability visibility overrides from seed data."
+    columns:
+      - name: tenant_id
+        tests:
+          - not_null
+      - name: capability_id
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - tenant_id
+              - capability_id
