@@ -3,4 +3,4 @@ select
     skill_id,
     weight,
     source
-from {{ ref('stg_capability_skills') }}
+from {{ ref('int_capability_skills_merged') }}

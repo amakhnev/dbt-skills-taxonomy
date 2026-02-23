@@ -26,76 +26,77 @@ models:
 
 seeds:
   skills_taxonomy:
-    +schema: seeds
-    skills:
-      +column_types:
-        skill_id: text
-        name: text
-        description: text
-        skill_type: text
-        lifecycle_state: text
-        created_at: timestamp
-        updated_at: timestamp
-    skill_synonyms:
-      +column_types:
-        skill_id: text
-        synonym: text
-        is_preferred: boolean
-        source: text
-    skill_redirects:
-      +column_types:
-        from_skill_id: text
-        to_skill_id: text
-        reason: text
-        created_at: timestamp
-    skill_implies:
-      +column_types:
-        from_skill_id: text
-        to_skill_id: text
-        strength: "numeric(3,2)"
-        source: text
-        lifecycle_state: text
-        created_at: timestamp
-        updated_at: timestamp
-    capabilities:
-      +column_types:
-        capability_id: text
-        name: text
-        description: text
-        group_name: text
-        lifecycle_state: text
-        created_at: timestamp
-        updated_at: timestamp
-    capability_skills:
-      +column_types:
-        capability_id: text
-        skill_id: text
-        weight: "numeric(3,2)"
-        source: text
-    skill_sources:
-      +column_types:
-        skill_id: text
-        source: text
-        source_id: text
-        source_uri: text
-        imported_at: timestamp
-    capability_sources:
-      +column_types:
-        capability_id: text
-        source: text
-        source_id: text
-        imported_at: timestamp
-    seed_tenant_skill_visibility:
-      +column_types:
-        tenant_id: text
-        skill_id: text
-        visibility_state: text
-        updated_at: timestamp
-        updated_by: text
-    seed_tenant_capability_visibility:
-      +column_types:
-        tenant_id: text
-        capability_id: text
-        visibility_state: text
-        updated_at: timestamp
-        updated_by: text
+    example:
+      +schema: seeds
+      skills:
+        +column_types:
+          skill_id: text
+          name: text
+          description: text
+          skill_type: text
+          lifecycle_state: text
+          created_at: timestamp
+          updated_at: timestamp
+      skill_synonyms:
+        +column_types:
+          skill_id: text
+          synonym: text
+          is_preferred: boolean
+          source: text
+      skill_redirects:
+        +column_types:
+          from_skill_id: text
+          to_skill_id: text
+          reason: text
+          created_at: timestamp
+      skill_implies:
+        +column_types:
+          from_skill_id: text
+          to_skill_id: text
+          strength: "numeric(3,2)"
+          source: text
+          lifecycle_state: text
+          created_at: timestamp
+          updated_at: timestamp
+      capabilities:
+        +column_types:
+          capability_id: text
+          name: text
+          description: text
+          group_name: text
+          lifecycle_state: text
+          created_at: timestamp
+          updated_at: timestamp
+      capability_skills:
+        +column_types:
+          capability_id: text
+          skill_id: text
+          weight: "numeric(3,2)"
+          source: text
+      skill_sources:
+        +column_types:
+          skill_id: text
+          source: text
+          source_id: text
+          source_uri: text
+          imported_at: timestamp
+      capability_sources:
+        +column_types:
+          capability_id: text
+          source: text
+          source_id: text
+          imported_at: timestamp
+      seed_tenant_skill_visibility:
+        +column_types:
+          tenant_id: text
+          skill_id: text
+          visibility_state: text
+          updated_at: timestamp
+          updated_by: text
+      seed_tenant_capability_visibility:
+        +column_types:
+          tenant_id: text
+          capability_id: text
+          visibility_state: text
+          updated_at: timestamp
+          updated_by: text

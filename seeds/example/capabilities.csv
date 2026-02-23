@@ -1,0 +1,5 @@
+capability_id,name,description,group_name,lifecycle_state,created_at,updated_at
+telepathy,Telepathy,Core telepathic communication abilities,Mind Management,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+remote-telepathy,Remote Telepathy,Long-range telepathic communication,Mind Management,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+hypnosis,Hypnosis,Hypnotic influence and induction,Mind Management,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+mass-hypnosis,Mass Hypnosis,Large-scale hypnotic influence,Mind Management,published,2024-01-01 00:00:00,2024-01-01 00:00:00

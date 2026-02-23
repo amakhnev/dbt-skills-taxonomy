@@ -1,0 +1,17 @@
+skill_id,name,description,skill_type,lifecycle_state,created_at,updated_at
+mind-reading,Mind Reading,Perceive thoughts of others through focused concentration,soft,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+emotional-sensing,Emotional Sensing,Detect emotional states without verbal cues,soft,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+thought-guessing,Thought Guessing,Predict likely thoughts based on behavioural patterns,soft,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+suggestion-planting,Suggestion Planting,Influence decisions through conversational technique,soft,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+crowd-reading,Crowd Reading,Sense collective mood and intent in large groups,soft,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+future-prediction,Future Prediction,Anticipate outcomes via psychic pattern recognition,soft,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+telepathy,Telepathy,Core telepathic ability fundamentals,soft,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+neurolink,NeuroLink,Core NeuroLink platform fundamentals,hard,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+neurolink-installation,NeuroLink Installation,Install and configure NeuroLink interface devices,hard,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+neurolink-operation,NeuroLink Operation,Operate and monitor NeuroLink systems,hard,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+thoughtbridge-operation,ThoughtBridge Operation,Operate ThoughtBridge devices for thought transfer,hard,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+psychic-amplifier-calibration,Psychic Amplifier Calibration,Calibrate amplifiers for long-range telepathy,hard,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+mind-shield-configuration,Mind Shield Configuration,Configure defensive barriers against intrusion,hard,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+hypno-beam-operation,Hypno-Beam Operation,Operate hypnotic induction devices,hard,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+telepathic-reading-skill,Telepathic Reading Skill,Legacy duplicate of Mind Reading,soft,suppressed,2024-01-01 00:00:00,2024-03-01 00:00:00
+nl-ops-legacy,NL Ops Legacy,Legacy name for NeuroLink Operation,hard,suppressed,2024-01-01 00:00:00,2024-03-01 00:00:00

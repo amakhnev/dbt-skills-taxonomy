@@ -3,4 +3,4 @@ select
     to_skill_id,
     reason,
     created_at
-from {{ ref('stg_skill_redirects') }}
+from {{ ref('int_skill_redirects_merged') }}

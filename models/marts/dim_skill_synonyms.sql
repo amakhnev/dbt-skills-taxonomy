@@ -3,4 +3,4 @@ select
     synonym,
     is_preferred,
     source
-from {{ ref('stg_skill_synonyms') }}
+from {{ ref('int_skill_synonyms_merged') }}

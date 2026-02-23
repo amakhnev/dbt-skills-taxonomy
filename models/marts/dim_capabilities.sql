@@ -6,4 +6,4 @@ select
     lifecycle_state,
     created_at,
     updated_at
-from {{ ref('stg_capabilities') }}
+from {{ ref('int_capabilities_merged') }}

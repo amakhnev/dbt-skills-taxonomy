@@ -1,0 +1,42 @@
+skill_id,synonym,is_preferred,source
+mind-reading,mind reading,true,manual
+mind-reading,mindreading,false,manual
+mind-reading,thought perception,false,manual
+mind-reading,telepathic reading,false,manual
+emotional-sensing,emotional sensing,true,manual
+emotional-sensing,emotion detection,false,manual
+thought-guessing,thought guessing,true,manual
+thought-guessing,thought prediction,false,manual
+suggestion-planting,suggestion planting,true,manual
+suggestion-planting,mental suggestion,false,manual
+crowd-reading,crowd reading,true,manual
+crowd-reading,group sensing,false,manual
+future-prediction,future prediction,true,manual
+future-prediction,precognition,false,manual
+telepathy,telepathy,true,manual
+telepathy,telepathic ability,false,manual
+neurolink,neurolink,true,manual
+neurolink,neuro link,false,manual
+neurolink,nl platform,false,manual
+neurolink-installation,neurolink installation,true,manual
+neurolink-installation,neurolink setup,false,manual
+neurolink-installation,nl installation,false,manual
+neurolink-installation,brain interface installation,false,manual
+neurolink-operation,neurolink operation,true,manual
+neurolink-operation,neurolink ops,false,manual
+neurolink-operation,nl ops,false,manual
+neurolink-operation,neurolink monitoring,false,manual
+thoughtbridge-operation,thoughtbridge operation,true,manual
+thoughtbridge-operation,thought bridge,false,manual
+thoughtbridge-operation,tb operation,false,manual
+thoughtbridge-operation,thought transfer operation,false,manual
+psychic-amplifier-calibration,psychic amplifier calibration,true,manual
+psychic-amplifier-calibration,psi-amp calibration,false,manual
+mind-shield-configuration,mind shield configuration,true,manual
+mind-shield-configuration,mental barrier setup,false,manual
+hypno-beam-operation,hypno-beam operation,true,manual
+hypno-beam-operation,hypno beam,false,manual
+hypno-beam-operation,hypnobeam,false,manual
+hypno-beam-operation,hb operation,false,manual
+telepathic-reading-skill,telepathic reading skill,true,manual
+nl-ops-legacy,nl ops legacy,true,manual

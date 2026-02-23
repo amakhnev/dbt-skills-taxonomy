@@ -16,6 +16,10 @@ capitalisation_policy = lower
 [sqlfluff:rules:capitalisation.functions]
 capitalisation_policy = lower
 
+[sqlfluff:rules:references.keywords]
+# Allow PRD-defined column names (name, source) that overlap with SQL keywords
+ignore_words = name,source,synonym
+
 [sqlfluff:templater:dbt]
 project_dir = .
 profiles_dir = .

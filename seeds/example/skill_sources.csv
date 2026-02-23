@@ -1,0 +1,17 @@
+skill_id,source,source_id,source_uri,imported_at
+mind-reading,manual,MMI-001,,2024-01-01 00:00:00
+emotional-sensing,manual,MMI-002,,2024-01-01 00:00:00
+thought-guessing,manual,MMI-003,,2024-01-01 00:00:00
+suggestion-planting,manual,MMI-004,,2024-01-01 00:00:00
+crowd-reading,manual,MMI-005,,2024-01-01 00:00:00
+future-prediction,manual,MMI-006,,2024-01-01 00:00:00
+telepathy,manual,MMI-016,,2024-01-01 00:00:00
+neurolink,manual,MMI-007,,2024-01-01 00:00:00
+neurolink-installation,manual,MMI-008,,2024-01-01 00:00:00
+neurolink-operation,manual,MMI-009,,2024-01-01 00:00:00
+thoughtbridge-operation,manual,MMI-010,,2024-01-01 00:00:00
+psychic-amplifier-calibration,manual,MMI-011,,2024-01-01 00:00:00
+mind-shield-configuration,manual,MMI-012,,2024-01-01 00:00:00
+hypno-beam-operation,manual,MMI-013,,2024-01-01 00:00:00
+telepathic-reading-skill,manual,MMI-014,,2024-01-01 00:00:00
+nl-ops-legacy,manual,MMI-015,,2024-01-01 00:00:00

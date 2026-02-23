@@ -1,0 +1,2 @@
+tenant_id,skill_id,visibility_state,updated_at,updated_by
+tenant_mmi_lab,future-prediction,hidden,2024-02-01 00:00:00,admin@mmi-lab.example

@@ -3,4 +3,4 @@ select
     source,
     source_id,
     imported_at
-from {{ ref('stg_capability_sources') }}
+from {{ ref('int_capability_sources_merged') }}

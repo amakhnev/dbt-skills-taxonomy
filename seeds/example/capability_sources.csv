@@ -1,0 +1,5 @@
+capability_id,source,source_id,imported_at
+telepathy,manual,CAP-MMI-001,2024-01-01 00:00:00
+remote-telepathy,manual,CAP-MMI-002,2024-01-01 00:00:00
+hypnosis,manual,CAP-MMI-003,2024-01-01 00:00:00
+mass-hypnosis,manual,CAP-MMI-004,2024-01-01 00:00:00

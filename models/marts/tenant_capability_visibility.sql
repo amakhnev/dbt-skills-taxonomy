@@ -4,4 +4,4 @@ select
     visibility_state,
     updated_at,
     updated_by
-from {{ ref('stg_tenant_capability_visibility') }}
+from {{ ref('int_tenant_capability_visibility_merged') }}

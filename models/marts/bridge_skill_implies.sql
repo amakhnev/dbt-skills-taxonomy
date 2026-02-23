@@ -6,4 +6,4 @@ select
     lifecycle_state,
     created_at,
     updated_at
-from {{ ref('stg_skill_implies') }}
+from {{ ref('int_skill_implies_merged') }}

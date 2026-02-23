@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: example
+    description: "Fictional Mind Management Institute seed dataset."
+    schema: "{{ target.schema }}_seeds"
+    tables:
+      - name: skills
+        description: "Raw skills seed data."
+      - name: skill_synonyms
+        description: "Raw skill synonym seed data."
+      - name: skill_redirects
+        description: "Raw skill redirect seed data."
+      - name: skill_implies
+        description: "Raw skill implication seed data."
+      - name: capabilities
+        description: "Raw capability seed data."
+      - name: capability_skills
+        description: "Raw capability-skill mapping seed data."
+      - name: skill_sources
+        description: "Raw skill source traceability seed data."
+      - name: capability_sources
+        description: "Raw capability source traceability seed data."
+      - name: seed_tenant_skill_visibility
+        description: "Raw tenant skill visibility override seed data."
+      - name: seed_tenant_capability_visibility
+        description: "Raw tenant capability visibility override seed data."

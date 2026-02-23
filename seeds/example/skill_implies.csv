@@ -1,0 +1,5 @@
+from_skill_id,to_skill_id,strength,source,lifecycle_state,created_at,updated_at
+neurolink-operation,neurolink,0.90,manual,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+neurolink-installation,neurolink,0.85,manual,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+thoughtbridge-operation,neurolink,0.80,manual,published,2024-01-01 00:00:00,2024-01-01 00:00:00
+psychic-amplifier-calibration,telepathy,0.60,manual,published,2024-01-01 00:00:00,2024-01-01 00:00:00

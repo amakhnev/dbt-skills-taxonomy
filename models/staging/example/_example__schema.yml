@@ -1,11 +1,11 @@
 version: 2
 
 models:
-  - name: dim_skills
-    description: "Canonical skills catalogue with lifecycle state. PRD-02 Section 7.1."
+  - name: stg_example__skills
+    description: "Cleaned skills from the example (Mind Management Institute) seed."
     columns:
       - name: skill_id
-        description: "Stable internal ID (slug derived from canonical name)."
+        description: "Stable internal skill identifier (slug)."
         tests:
           - not_null
           - unique
@@ -14,16 +14,16 @@ models:
         tests:
           - not_null
       - name: description
-        description: "Optional definition or description."
+        description: "Optional skill definition."
       - name: skill_type
-        description: "Skill classification: hard or soft."
+        description: "hard or soft."
         tests:
           - not_null
           - accepted_values:
               arguments:
                 values: ["hard", "soft"]
       - name: lifecycle_state
-        description: "Global lifecycle: draft, published, deprecated, or suppressed."
+        description: "draft, published, deprecated, or suppressed."
         tests:
           - not_null
           - accepted_values:
@@ -38,19 +38,15 @@ models:
         tests:
           - not_null
 
-  - name: dim_skill_synonyms
-    description: "Text variants that resolve to the same canonical skill. PRD-02 Section 7.2."
+  - name: stg_example__skill_synonyms
+    description: "Cleaned skill synonyms from the example seed."
     columns:
       - name: skill_id
-        description: "Foreign key to dim_skills."
+        description: "Foreign key to skills."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_skills')
-                field: skill_id
       - name: synonym
-        description: "Normalised synonym text (lowercase, trimmed)."
+        description: "Normalised synonym text (lowercase/trimmed)."
         tests:
           - not_null
       - name: is_preferred
@@ -68,24 +64,20 @@ models:
               - skill_id
               - synonym
 
-  - name: dim_skill_redirects
-    description: "Mappings from obsolete/duplicate skill IDs to canonical IDs. PRD-02 Section 7.3."
+  - name: stg_example__skill_redirects
+    description: "Cleaned skill redirects from the example seed."
     columns:
       - name: from_skill_id
-        description: "Old or duplicate skill ID being retired."
+        description: "Old/duplicate skill ID being redirected."
         tests:
           - not_null
           - unique
       - name: to_skill_id
-        description: "Canonical skill ID to redirect to."
+        description: "Canonical skill ID target."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_skills')
-                field: skill_id
       - name: reason
-        description: "Why the redirect exists: duplicate, renamed, merged, or standardised."
+        description: "Redirect reason: duplicate, renamed, merged, or standardised."
         tests:
           - not_null
           - accepted_values:
@@ -96,27 +88,19 @@ models:
         tests:
           - not_null
 
-  - name: bridge_skill_implies
-    description: "Directed inference edges for post-normalisation skill expansion. PRD-02 Section 7.4."
+  - name: stg_example__skill_implies
+    description: "Cleaned skill implication edges from the example seed."
     columns:
       - name: from_skill_id
-        description: "Observed skill (e.g. django)."
+        description: "Observed skill that implies another."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_skills')
-                field: skill_id
       - name: to_skill_id
-        description: "Implied foundational skill (e.g. python)."
+        description: "Implied foundational skill."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_skills')
-                field: skill_id
       - name: strength
-        description: "Inference confidence weight 0.00-1.00."
+        description: "Confidence weight 0.00-1.00."
         tests:
           - not_null
       - name: source
@@ -145,8 +129,8 @@ models:
               - from_skill_id
               - to_skill_id
 
-  - name: dim_capabilities
-    description: "Scored capability concepts derived from weighted skills. PRD-02 Section 7.5."
+  - name: stg_example__capabilities
+    description: "Cleaned capabilities from the example seed."
     columns:
       - name: capability_id
         description: "Stable internal capability identifier."
@@ -162,7 +146,7 @@ models:
       - name: group_name
         description: "Optional grouping label for navigation/reporting."
       - name: lifecycle_state
-        description: "Global lifecycle: draft, published, deprecated, or suppressed."
+        description: "draft, published, deprecated, or suppressed."
         tests:
           - not_null
           - accepted_values:
@@ -177,31 +161,23 @@ models:
         tests:
           - not_null
 
-  - name: bridge_capability_skills
-    description: "Weighted skill-to-capability mappings for scoring. PRD-02 Section 7.6."
+  - name: stg_example__capability_skills
+    description: "Cleaned capability-skill weight mappings from the example seed."
     columns:
       - name: capability_id
-        description: "Foreign key to dim_capabilities."
+        description: "Foreign key to capabilities."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_capabilities')
-                field: capability_id
       - name: skill_id
-        description: "Foreign key to dim_skills (canonical)."
+        description: "Foreign key to skills."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_skills')
-                field: skill_id
       - name: weight
         description: "Relevance weight 0.00-1.00."
         tests:
           - not_null
       - name: source
-        description: "Mapping source provenance."
+        description: "Data provenance."
         tests:
           - not_null
     tests:
@@ -211,17 +187,13 @@ models:
               - capability_id
               - skill_id
 
-  - name: dim_skill_sources
-    description: "Multi-source traceability for canonical skills. PRD-02 Section 7.7."
+  - name: stg_example__skill_sources
+    description: "Cleaned skill source traceability from the example seed."
     columns:
       - name: skill_id
-        description: "Foreign key to dim_skills."
+        description: "Foreign key to skills."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_skills')
-                field: skill_id
       - name: source
         description: "Source system name (manual, lightcast, esco, etc.)."
         tests:
@@ -233,7 +205,7 @@ models:
       - name: source_uri
         description: "External URI if available."
       - name: imported_at
-        description: "When this mapping was imported."
+        description: "When this record was imported."
         tests:
           - not_null
     tests:
@@ -243,17 +215,13 @@ models:
               - skill_id
               - source
 
-  - name: dim_capability_sources
-    description: "Multi-source traceability for capabilities. PRD-02 Section 7.8."
+  - name: stg_example__capability_sources
+    description: "Cleaned capability source traceability from the example seed."
     columns:
       - name: capability_id
-        description: "Foreign key to dim_capabilities."
+        description: "Foreign key to capabilities."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_capabilities')
-                field: capability_id
       - name: source
         description: "Source system name."
         tests:
@@ -263,7 +231,7 @@ models:
         tests:
           - not_null
       - name: imported_at
-        description: "When this mapping was imported."
+        description: "When this record was imported."
         tests:
           - not_null
     tests:
@@ -273,23 +241,19 @@ models:
               - capability_id
               - source
 
-  - name: tenant_skill_visibility
-    description: "Per-tenant skill visibility overrides. PRD-02 Section 8.1."
+  - name: stg_example__tenant_skill_visibility
+    description: "Cleaned tenant skill visibility overrides from the example seed."
     columns:
       - name: tenant_id
         description: "Tenant identifier."
         tests:
           - not_null
       - name: skill_id
-        description: "Foreign key to dim_skills."
+        description: "Foreign key to skills."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_skills')
-                field: skill_id
       - name: visibility_state
-        description: "Tenant override: enabled or hidden. Missing row implies enabled."
+        description: "enabled or hidden."
         tests:
           - not_null
           - accepted_values:
@@ -300,7 +264,7 @@ models:
         tests:
           - not_null
       - name: updated_by
-        description: "Optional actor ID or email who made the change."
+        description: "Optional actor ID or email."
     tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
@@ -308,23 +272,19 @@ models:
               - tenant_id
               - skill_id
 
-  - name: tenant_capability_visibility
-    description: "Per-tenant capability visibility overrides. PRD-02 Section 8.2."
+  - name: stg_example__tenant_capability_visibility
+    description: "Cleaned tenant capability visibility overrides from the example seed."
     columns:
       - name: tenant_id
         description: "Tenant identifier."
         tests:
           - not_null
       - name: capability_id
-        description: "Foreign key to dim_capabilities."
+        description: "Foreign key to capabilities."
         tests:
           - not_null
-          - relationships:
-              arguments:
-                to: ref('dim_capabilities')
-                field: capability_id
       - name: visibility_state
-        description: "Tenant override: enabled or hidden. Missing row implies enabled."
+        description: "enabled or hidden."
         tests:
           - not_null
           - accepted_values:
@@ -335,7 +295,7 @@ models:
         tests:
           - not_null
       - name: updated_by
-        description: "Optional actor ID or email who made the change."
+        description: "Optional actor ID or email."
     tests:
       - dbt_utils.unique_combination_of_columns:
           arguments:
