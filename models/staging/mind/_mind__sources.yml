@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: mind
+    schema: raw
+    tables:
+      - name: mind_skills
+        description: "MIND Tech Ontology aggregated skills (full JSON payload)."
+      - name: mind_concepts
+        description: "MIND Tech Ontology aggregated concepts (full JSON payload)."

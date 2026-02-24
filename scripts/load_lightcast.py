@@ -65,7 +65,11 @@ _SLUG_RE = re.compile(r"[^a-z0-9]+")
 
 def slugify(text: str) -> str:
     """Convert text to a URL-safe slug matching the dbt macro intent."""
+    text = text.replace("++", "-plus-plus")
+    text = text.replace("#", "-sharp")
     slug = _SLUG_RE.sub("-", text.lower()).strip("-")
+    # Collapse multiple hyphens
+    slug = re.sub(r"-+", "-", slug)
     return slug or "unnamed"
 
 

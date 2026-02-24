@@ -3,9 +3,11 @@
 select
     s.skill_id,
     s.name
-from {{ ref('dim_skills') }} s
-left join {{ ref('dim_skill_synonyms') }} syn
-    on syn.skill_id = s.skill_id
-    and syn.is_preferred = true
-where s.lifecycle_state in ('published', 'deprecated')
-  and syn.skill_id is null
+from {{ ref('dim_skills') }} as s
+left join {{ ref('dim_skill_synonyms') }} as syn
+    on
+        s.skill_id = syn.skill_id
+        and syn.is_preferred = true
+where
+    s.lifecycle_state in ('published', 'deprecated')
+    and syn.skill_id is null

@@ -1,0 +1,181 @@
+version: 2
+
+models:
+  - name: stg_mind__skills
+    description: "Skills from the MIND Tech Ontology."
+    columns:
+      - name: skill_id
+        description: "Slugified skill name."
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: "Canonical display name."
+        tests:
+          - not_null
+      - name: skill_type
+        description: "Always hard (tech-focused ontology)."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["hard"]
+      - name: lifecycle_state
+        description: "Default published."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["published"]
+      - name: created_at
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+
+  - name: stg_mind__skill_synonyms
+    description: "Synonyms from the MIND ontology, with is_preferred for canonical name match."
+    columns:
+      - name: skill_id
+        tests:
+          - not_null
+      - name: synonym
+        tests:
+          - not_null
+      - name: is_preferred
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - skill_id
+              - synonym
+
+  - name: stg_mind__skill_implies
+    description: "Implied skill edges from impliesKnowingSkills and supportedProgrammingLanguages."
+    columns:
+      - name: from_skill_id
+        tests:
+          - not_null
+      - name: to_skill_id
+        tests:
+          - not_null
+      - name: strength
+        description: "0.90 for impliesKnowingSkills, 0.95 for supportedProgrammingLanguages."
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+      - name: lifecycle_state
+        tests:
+          - not_null
+      - name: created_at
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - from_skill_id
+              - to_skill_id
+
+  - name: stg_mind__capabilities
+    description: "Capabilities from MIND technical domains (published) and concepts (draft)."
+    columns:
+      - name: capability_id
+        tests:
+          - not_null
+          - unique
+      - name: name
+        tests:
+          - not_null
+      - name: lifecycle_state
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["published", "draft"]
+      - name: created_at
+        tests:
+          - not_null
+      - name: updated_at
+        tests:
+          - not_null
+
+  - name: stg_mind__capability_skills
+    description: "Skill-to-capability weights from domain membership and concept references."
+    columns:
+      - name: capability_id
+        tests:
+          - not_null
+      - name: skill_id
+        tests:
+          - not_null
+      - name: weight
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - capability_id
+              - skill_id
+
+  - name: stg_mind__skill_sources
+    description: "Source traceability for MIND skills."
+    columns:
+      - name: skill_id
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+      - name: source_id
+        tests:
+          - not_null
+      - name: source_uri
+        tests:
+          - not_null
+      - name: imported_at
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - skill_id
+              - source
+
+  - name: stg_mind__capability_sources
+    description: "Source traceability for MIND domain and concept capabilities."
+    columns:
+      - name: capability_id
+        tests:
+          - not_null
+      - name: source
+        tests:
+          - not_null
+      - name: source_id
+        tests:
+          - not_null
+      - name: imported_at
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - capability_id
+              - source
