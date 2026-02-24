@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: lightcast_import_batches
+        description: "Import batch metadata with version tracking."
+      - name: lightcast_skill_id_map
+        description: "Persistent stable ID mapping across Lightcast renames."
+      - name: lightcast_skills
+        description: "Versioned skill rows with extracted fields and full JSON payload."
+      - name: lightcast_attributions
+        description: "Attribution credits per import batch."

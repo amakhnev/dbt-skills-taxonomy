@@ -2,7 +2,7 @@ version: 2
 
 models:
   - name: int_skills_merged
-    description: "Union of all source-specific skills staging models. Currently: example only."
+    description: "Union of all source-specific skills staging models, deduplicated by skill_id with source priority."
     columns:
       - name: skill_id
         description: "Stable internal skill identifier (slug)."

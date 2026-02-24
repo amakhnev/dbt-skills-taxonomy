@@ -1,0 +1,171 @@
+version: 2
+
+models:
+  - name: stg_lightcast__skills
+    description: "Cleaned skills from the current Lightcast import batch."
+    columns:
+      - name: skill_id
+        description: "Stable internal skill identifier from persistent mapping."
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: "Canonical display name."
+        tests:
+          - not_null
+      - name: description
+        description: "Skill definition from Lightcast (nullable)."
+      - name: skill_type
+        description: "hard or soft (Common Skill -> soft, all others -> hard)."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["hard", "soft"]
+      - name: lifecycle_state
+        description: "Default lifecycle state for Lightcast skills."
+        tests:
+          - not_null
+      - name: created_at
+        description: "Batch import timestamp."
+        tests:
+          - not_null
+      - name: updated_at
+        description: "Batch import timestamp."
+        tests:
+          - not_null
+
+  - name: stg_lightcast__skill_synonyms
+    description: "Preferred synonym per Lightcast skill (lowercased name)."
+    columns:
+      - name: skill_id
+        description: "Foreign key to skills."
+        tests:
+          - not_null
+      - name: synonym
+        description: "Lowercased, trimmed skill name."
+        tests:
+          - not_null
+      - name: is_preferred
+        description: "Always true for Lightcast preferred synonyms."
+        tests:
+          - not_null
+      - name: source
+        description: "Data provenance (lightcast)."
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - skill_id
+              - synonym
+
+  - name: stg_lightcast__skill_sources
+    description: "Source traceability for Lightcast skills."
+    columns:
+      - name: skill_id
+        description: "Foreign key to skills."
+        tests:
+          - not_null
+      - name: source
+        description: "Source system name (lightcast)."
+        tests:
+          - not_null
+      - name: source_id
+        description: "Lightcast skill ID."
+        tests:
+          - not_null
+      - name: source_uri
+        description: "Lightcast infoUrl."
+      - name: imported_at
+        description: "When this record was imported."
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - skill_id
+              - source
+
+  - name: stg_lightcast__capabilities
+    description: "Capabilities derived from Lightcast subcategories."
+    columns:
+      - name: capability_id
+        description: "Stable capability ID (lc_subcat_<subcategory_id>)."
+        tests:
+          - not_null
+          - unique
+      - name: name
+        description: "Subcategory display name."
+        tests:
+          - not_null
+      - name: description
+        description: "Always null for Lightcast-derived capabilities."
+      - name: group_name
+        description: "Category name used as grouping label."
+      - name: lifecycle_state
+        description: "Default published."
+        tests:
+          - not_null
+      - name: created_at
+        description: "Batch import timestamp."
+        tests:
+          - not_null
+      - name: updated_at
+        description: "Batch import timestamp."
+        tests:
+          - not_null
+
+  - name: stg_lightcast__capability_skills
+    description: "Skill-to-capability bridge from Lightcast subcategories."
+    columns:
+      - name: capability_id
+        description: "Foreign key to capabilities."
+        tests:
+          - not_null
+      - name: skill_id
+        description: "Foreign key to skills."
+        tests:
+          - not_null
+      - name: weight
+        description: "Fixed weight of 1.00."
+        tests:
+          - not_null
+      - name: source
+        description: "Data provenance (lightcast)."
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - capability_id
+              - skill_id
+
+  - name: stg_lightcast__capability_sources
+    description: "Source traceability for Lightcast-derived capabilities."
+    columns:
+      - name: capability_id
+        description: "Foreign key to capabilities."
+        tests:
+          - not_null
+      - name: source
+        description: "Source system name (lightcast)."
+        tests:
+          - not_null
+      - name: source_id
+        description: "Lightcast subcategory ID as string."
+        tests:
+          - not_null
+      - name: imported_at
+        description: "When this record was imported."
+        tests:
+          - not_null
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - capability_id
+              - source
