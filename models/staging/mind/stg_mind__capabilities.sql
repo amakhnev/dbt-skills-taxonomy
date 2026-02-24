@@ -13,11 +13,11 @@ with skills as (
 
 -- 1. Domain capabilities (published)
 domains as (
-    select distinct
+    select
         trim(dom.value::text, '"') as domain_name,
-        min(imported_at) as imported_at
+        min(skills.imported_at) as imported_at
     from skills,
-        jsonb_array_elements(payload -> 'technicalDomains') as dom (value)
+        jsonb_array_elements(skills.payload -> 'technicalDomains') as dom (value)
     where trim(dom.value::text, '"') != ''
     group by 1
 ),

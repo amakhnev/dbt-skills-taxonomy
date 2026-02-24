@@ -8,20 +8,20 @@ with src as (
 -- Explode synonyms array
 from_array as (
     select
-        {{ slugify('name') }} as skill_id,
-        lower(trim(name)) as canonical_name,
+        {{ slugify('src.name') }} as skill_id,
+        lower(trim(src.name)) as canonical_name,
         lower(trim(syn.value::text, '"')) as synonym
     from src,
-        jsonb_array_elements(payload -> 'synonyms') as syn (value)
+        jsonb_array_elements(src.payload -> 'synonyms') as syn (value)  -- noqa: RF04
     where trim(syn.value::text, '"') != ''
 ),
 
 -- Always add canonical name as a synonym (ensures preferred exists)
 canonical as (
     select
-        {{ slugify('name') }} as skill_id,
-        lower(trim(name)) as canonical_name,
-        lower(trim(name)) as synonym
+        {{ slugify('src.name') }} as skill_id,
+        lower(trim(src.name)) as canonical_name,
+        lower(trim(src.name)) as synonym
     from src
 ),
 

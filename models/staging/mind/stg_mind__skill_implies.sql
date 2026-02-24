@@ -8,22 +8,22 @@ with src as (
 
 implies_skills as (
     select
-        {{ slugify('name') }} as from_skill_id,
+        {{ slugify('src.name') }} as from_skill_id,
         {{ slugify('ref.value::text') }} as to_skill_id,
         0.90 as strength,
-        imported_at
+        src.imported_at
     from src,
-        jsonb_array_elements(payload -> 'impliesKnowingSkills') as ref (value)
+        jsonb_array_elements(src.payload -> 'impliesKnowingSkills') as ref (value)  -- noqa: RF04
 ),
 
 supported_langs as (
     select
-        {{ slugify('name') }} as from_skill_id,
+        {{ slugify('src.name') }} as from_skill_id,
         {{ slugify('ref.value::text') }} as to_skill_id,
         0.95 as strength,
-        imported_at
+        src.imported_at
     from src,
-        jsonb_array_elements(payload -> 'supportedProgrammingLanguages') as ref (value)
+        jsonb_array_elements(src.payload -> 'supportedProgrammingLanguages') as ref (value)  -- noqa: RF04
 ),
 
 unioned as (

@@ -237,6 +237,37 @@ This generates compiled SQL in `target/compiled/` for review.
 
 ---
 
+## Working with Data
+
+The `analyses/` folder contains pre-built SQL queries for data quality and governance tasks.
+Compile them with:
+
+```bash
+uv run dbt compile --select "analyses/*" --profiles-dir .
+```
+
+Compiled SQL is written to `target/compiled/skills_taxonomy/analyses/` and can be run
+directly against the database.
+
+### Capability publish candidates
+
+`analyses/capability_publish_candidates.sql` — finds draft capabilities that have skills
+linked to them, ranked by skill count. Use this to identify which draft capabilities are
+mature enough to promote to published.
+
+### Capability depublish candidates
+
+`analyses/capability_depublish_candidates.sql` — finds capabilities with zero skills linked.
+These are empty shells that may need to be removed or demoted to draft.
+
+### Capability deduplication candidates
+
+`analyses/capability_dedup_candidates.sql` — finds pairs of capabilities whose skill sets
+overlap significantly, scored by Jaccard similarity (intersection / union). Pairs scoring
+0.3+ are flagged as merge candidates.
+
+---
+
 ## Development Workflow
 
 1. `uv sync`

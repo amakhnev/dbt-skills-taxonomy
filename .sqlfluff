@@ -2,6 +2,8 @@
 dialect = postgres
 templater = dbt
 max_line_length = 120
+# ST06 reorders columns which breaks select * unions across sources
+exclude_rules = structure.column_order
 
 [sqlfluff:indentation]
 indent_unit = space
@@ -17,8 +19,8 @@ capitalisation_policy = lower
 capitalisation_policy = lower
 
 [sqlfluff:rules:references.keywords]
-# Allow PRD-defined column names (name, source) that overlap with SQL keywords
-ignore_words = name,source,synonym
+# Allow PRD-defined column names (name, source, value) that overlap with SQL keywords
+ignore_words = name,source,synonym,value
 
 [sqlfluff:templater:dbt]
 project_dir = .
