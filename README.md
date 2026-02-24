@@ -53,17 +53,18 @@ Lightcast files are provided manually and stored in a gitignored folder.
 
 ### 1) Place files
 
-* `data/lightcast/versions/lightcast_<version>.json`
+* `data/lightcast/lightcast_<version>.json`
 * `data/lightcast/import_meta.json`
 
 Example:
 
-* `data/lightcast/versions/lightcast_v9.40.json`
+* `data/lightcast/lightcast_v9.40.json`
 * `data/lightcast/import_meta.json`:
 
   ```json
   {
     "version": "v9.40",
+    "filename": "lightcast_v9.40.json",
     "source": "lightcast",
     "notes": "Downloaded on 2026-02-23"
   }
@@ -73,7 +74,6 @@ Example:
 
 ```bash
 uv run python scripts/load_lightcast.py \
-  --file data/lightcast/versions/lightcast_v9.40.json \
   --meta data/lightcast/import_meta.json
 ```
 
@@ -88,8 +88,8 @@ uv run dbt test --profiles-dir .
 
 ### 4) Updating to a newer Lightcast version
 
-1. Add the new file under `data/lightcast/versions/`
-2. Update `data/lightcast/import_meta.json` with the new `"version"`
+1. Add the new file under `data/lightcast/lightcast_<version>.json`
+2. Update `data/lightcast/import_meta.json` with the new `"version"`, `"filename"`
 3. Re-run the loader and dbt
 
 The project includes diff models so you can inspect what changed between the new current batch and the previous one.
