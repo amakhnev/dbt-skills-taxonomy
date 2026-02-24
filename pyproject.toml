@@ -1,6 +1,6 @@
 [project]
 name = "dbt-skills-taxonomy"
-version = "0.1.0"
+version = "1.0.0"
 description = "dbt project for building a normalized skills taxonomy in PostgreSQL"
 readme = "README.md"
 requires-python = ">=3.12"
