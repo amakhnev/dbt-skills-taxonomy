@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Skills Taxonomy Marts API Reference",
+  "description": "Canonical table structure for the skills_taxonomy marts. Tables are created in the target schema (e.g. skills) by dbt. Use this file for application code generation, API contracts, or documentation.",
+  "schema_name": "skills_marts",
+  "tables": [
+    {
+      "table": "dim_skills",
+      "description": "Canonical skills catalogue with lifecycle state. PRD-02 Section 7.1.",
+      "columns": [
+        { "name": "skill_id", "type": "text", "nullable": false, "description": "Stable internal ID (slug derived from canonical name)." },
+        { "name": "name", "type": "text", "nullable": false, "description": "Canonical display name." },
+        { "name": "description", "type": "text", "nullable": true, "description": "Optional definition or description." },
+        { "name": "skill_type", "type": "text", "nullable": false, "description": "Skill classification: hard or soft.", "enum": ["hard", "soft"] },
+        { "name": "lifecycle_state", "type": "text", "nullable": false, "description": "Global lifecycle.", "enum": ["draft", "published", "deprecated", "suppressed"] },
+        { "name": "created_at", "type": "timestamptz", "nullable": false, "description": "Row creation timestamp." },
+        { "name": "updated_at", "type": "timestamptz", "nullable": false, "description": "Row last-update timestamp." }
+      ],
+      "primary_key": ["skill_id"]
+    },
+    {
+      "table": "dim_skill_synonyms",
+      "description": "Text variants that resolve to the same canonical skill. PRD-02 Section 7.2.",
+      "columns": [
+        { "name": "skill_id", "type": "text", "nullable": false, "description": "Foreign key to dim_skills.", "references": "dim_skills.skill_id" },
+        { "name": "synonym", "type": "text", "nullable": false, "description": "Normalised synonym text (lowercase, trimmed)." },
+        { "name": "is_preferred", "type": "boolean", "nullable": false, "description": "True for the canonical display synonym." },
+        { "name": "source", "type": "text", "nullable": false, "description": "Data provenance (manual, lightcast, esco, etc.)." }
+      ],
+      "unique": [["skill_id", "synonym"]]
+    },
+    {
+      "table": "dim_skill_redirects",
+      "description": "Mappings from obsolete/duplicate skill IDs to canonical IDs. PRD-02 Section 7.3.",
+      "columns": [
+        { "name": "from_skill_id", "type": "text", "nullable": false, "description": "Old or duplicate skill ID being retired." },
+        { "name": "to_skill_id", "type": "text", "nullable": false, "description": "Canonical skill ID to redirect to.", "references": "dim_skills.skill_id" },
+        { "name": "reason", "type": "text", "nullable": false, "description": "Why the redirect exists.", "enum": ["duplicate", "renamed", "merged", "standardised"] },
+        { "name": "created_at", "type": "timestamptz", "nullable": false, "description": "When the redirect was created." }
+      ],
+      "primary_key": ["from_skill_id"]
+    },
+    {
+      "table": "bridge_skill_implies",
+      "description": "Directed inference edges for post-normalisation skill expansion. PRD-02 Section 7.4.",
+      "columns": [
+        { "name": "from_skill_id", "type": "text", "nullable": false, "description": "Observed skill (e.g. django).", "references": "dim_skills.skill_id" },
+        { "name": "to_skill_id", "type": "text", "nullable": false, "description": "Implied foundational skill (e.g. python).", "references": "dim_skills.skill_id" },
+        { "name": "strength", "type": "numeric", "nullable": false, "description": "Inference confidence weight 0.00-1.00." },
+        { "name": "source", "type": "text", "nullable": false, "description": "Data provenance." },
+        { "name": "lifecycle_state", "type": "text", "nullable": false, "description": "Edge lifecycle.", "enum": ["published", "deprecated", "suppressed"] },
+        { "name": "created_at", "type": "timestamptz", "nullable": false, "description": "Row creation timestamp." },
+        { "name": "updated_at", "type": "timestamptz", "nullable": false, "description": "Row last-update timestamp." }
+      ],
+      "unique": [["from_skill_id", "to_skill_id"]]
+    },
+    {
+      "table": "dim_capabilities",
+      "description": "Scored capability concepts derived from weighted skills. PRD-02 Section 7.5.",
+      "columns": [
+        { "name": "capability_id", "type": "text", "nullable": false, "description": "Stable internal capability identifier." },
+        { "name": "name", "type": "text", "nullable": false, "description": "Display name." },
+        { "name": "description", "type": "text", "nullable": true, "description": "Optional capability definition." },
+        { "name": "group_name", "type": "text", "nullable": true, "description": "Optional grouping label for navigation/reporting." },
+        { "name": "lifecycle_state", "type": "text", "nullable": false, "description": "Global lifecycle.", "enum": ["draft", "published", "deprecated", "suppressed"] },
+        { "name": "created_at", "type": "timestamptz", "nullable": false, "description": "Row creation timestamp." },
+        { "name": "updated_at", "type": "timestamptz", "nullable": false, "description": "Row last-update timestamp." }
+      ],
+      "primary_key": ["capability_id"]
+    },
+    {
+      "table": "bridge_capability_skills",
+      "description": "Weighted skill-to-capability mappings for scoring. PRD-02 Section 7.6.",
+      "columns": [
+        { "name": "capability_id", "type": "text", "nullable": false, "description": "Foreign key to dim_capabilities.", "references": "dim_capabilities.capability_id" },
+        { "name": "skill_id", "type": "text", "nullable": false, "description": "Foreign key to dim_skills (canonical).", "references": "dim_skills.skill_id" },
+        { "name": "weight", "type": "numeric", "nullable": false, "description": "Relevance weight 0.00-1.00." },
+        { "name": "source", "type": "text", "nullable": false, "description": "Mapping source provenance." }
+      ],
+      "unique": [["capability_id", "skill_id"]]
+    },
+    {
+      "table": "dim_skill_sources",
+      "description": "Multi-source traceability for canonical skills. PRD-02 Section 7.7.",
+      "columns": [
+        { "name": "skill_id", "type": "text", "nullable": false, "description": "Foreign key to dim_skills.", "references": "dim_skills.skill_id" },
+        { "name": "source", "type": "text", "nullable": false, "description": "Source system name (manual, lightcast, esco, etc.)." },
+        { "name": "source_id", "type": "text", "nullable": false, "description": "External identifier in the source system." },
+        { "name": "source_uri", "type": "text", "nullable": true, "description": "External URI if available." },
+        { "name": "imported_at", "type": "timestamptz", "nullable": false, "description": "When this mapping was imported." }
+      ],
+      "unique": [["skill_id", "source"]]
+    },
+    {
+      "table": "dim_capability_sources",
+      "description": "Multi-source traceability for capabilities. PRD-02 Section 7.8.",
+      "columns": [
+        { "name": "capability_id", "type": "text", "nullable": false, "description": "Foreign key to dim_capabilities.", "references": "dim_capabilities.capability_id" },
+        { "name": "source", "type": "text", "nullable": false, "description": "Source system name." },
+        { "name": "source_id", "type": "text", "nullable": false, "description": "External identifier in the source system." },
+        { "name": "imported_at", "type": "timestamptz", "nullable": false, "description": "When this mapping was imported." }
+      ],
+      "unique": [["capability_id", "source"]]
+    },
+    {
+      "table": "tenant_skill_visibility",
+      "description": "Per-tenant skill visibility overrides. PRD-02 Section 8.1.",
+      "columns": [
+        { "name": "tenant_id", "type": "text", "nullable": false, "description": "Tenant identifier." },
+        { "name": "skill_id", "type": "text", "nullable": false, "description": "Foreign key to dim_skills.", "references": "dim_skills.skill_id" },
+        { "name": "visibility_state", "type": "text", "nullable": false, "description": "Tenant override: enabled or hidden. Missing row implies enabled.", "enum": ["enabled", "hidden"] },
+        { "name": "updated_at", "type": "timestamptz", "nullable": false, "description": "When this override was last updated." },
+        { "name": "updated_by", "type": "text", "nullable": true, "description": "Optional actor ID or email who made the change." }
+      ],
+      "unique": [["tenant_id", "skill_id"]]
+    },
+    {
+      "table": "tenant_capability_visibility",
+      "description": "Per-tenant capability visibility overrides. PRD-02 Section 8.2.",
+      "columns": [
+        { "name": "tenant_id", "type": "text", "nullable": false, "description": "Tenant identifier." },
+        { "name": "capability_id", "type": "text", "nullable": false, "description": "Foreign key to dim_capabilities.", "references": "dim_capabilities.capability_id" },
+        { "name": "visibility_state", "type": "text", "nullable": false, "description": "Tenant override: enabled or hidden. Missing row implies enabled.", "enum": ["enabled", "hidden"] },
+        { "name": "updated_at", "type": "timestamptz", "nullable": false, "description": "When this override was last updated." },
+        { "name": "updated_by", "type": "text", "nullable": true, "description": "Optional actor ID or email who made the change." }
+      ],
+      "unique": [["tenant_id", "capability_id"]]
+    }
+  ]
+}

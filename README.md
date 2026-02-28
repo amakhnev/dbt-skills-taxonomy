@@ -131,6 +131,7 @@ uv run dbt test --profiles-dir .
 * `tests/` - Singular data tests (self-loops, range checks, preferred synonyms)
 * `scripts/` - Python scripts to load external source files into `raw.*`
 * `data/` - Source files (gitignored)
+* `docs/marts_schema.json` - Single-file marts table reference for applications (columns, types, FKs, enums)
 
 ## Adding a New Import Source
 
@@ -162,6 +163,8 @@ prod:
 
 Set the environment variables before running any commands:
 
+#### Bash (Linux/macOS):
+
 ```bash
 export PROD_DB_HOST=your-prod-host
 export PROD_DB_PORT=5432
@@ -169,6 +172,17 @@ export PROD_DB_USER=your-prod-user
 export PROD_DB_PASSWORD=your-prod-password
 export PROD_DB_NAME=skills_taxonomy
 ```
+
+#### PowerShell (Windows):
+
+```powershell
+$env:PROD_DB_HOST="your-prod-host"
+$env:PROD_DB_PORT="5432"
+$env:PROD_DB_USER="your-prod-user"
+$env:PROD_DB_PASSWORD="your-prod-password"
+$env:PROD_DB_NAME="skills_taxonomy"
+```
+
 
 ### 2) Prepare data files
 
@@ -183,12 +197,47 @@ Before deploying, ensure all required source data is in place:
 For the initial deployment only the example seeds are required. Lightcast and MIND
 files should be loaded via their respective scripts before running dbt (see sections above).
 
+**Raw schema:** The `raw` schema (and Lightcast/MIND raw tables) are created by dbt
+run-operations. The deploy steps below include these so the first deploy creates them.
+If you deploy without the run-operations, run once:
+
+```bash
+uv run dbt run-operation create_lightcast_raw_tables --profiles-dir . --target prod
+uv run dbt run-operation create_mind_raw_tables --profiles-dir . --target prod
+```
+
+**Loading Lightcast/MIND into production:** The Python load scripts do not read the dbt
+profile; they use `--db-url` or the `DATABASE_URL` environment variable. To load data
+into production, set `DATABASE_URL` to your production Postgres URL, then run the
+loaders (from the project root, with `data/lightcast/` or `data/mind/` in place):
+
+```bash
+# Build prod URL from same vars as dbt (bash)
+export DATABASE_URL="postgresql://${PROD_DB_USER}:${PROD_DB_PASSWORD}@${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}"
+uv run python scripts/load_lightcast.py --meta data/lightcast/import_meta.json
+uv run python scripts/load_mind_ontology.py
+```
+
+PowerShell (Windows):
+
+```powershell
+$env:DATABASE_URL = "postgresql://$($env:PROD_DB_USER):$($env:PROD_DB_PASSWORD)@$($env:PROD_DB_HOST):$($env:PROD_DB_PORT)/$($env:PROD_DB_NAME)"
+uv run python scripts/load_lightcast.py --meta data/lightcast/import_meta.json
+uv run python scripts/load_mind_ontology.py
+```
+
+Then run the deploy (or `uv run dbt run --profiles-dir . --target prod` and `dbt test`) to build models from the loaded raw data.
+
 ### 3) Incremental deploy (safe, no data loss)
 
 This is the default mode. Staging and intermediate models are views (always recreated).
 Marts tables are rebuilt via `create table as` but **do not drop upstream raw/seed data**.
 
 ```bash
+# Create raw schema and raw tables if missing (first deploy or new DB)
+uv run dbt run-operation create_lightcast_raw_tables --profiles-dir . --target prod
+uv run dbt run-operation create_mind_raw_tables --profiles-dir . --target prod
+
 # Install packages
 uv run dbt deps --profiles-dir . --target prod
 
@@ -201,6 +250,10 @@ uv run dbt run --profiles-dir . --target prod
 # Validate
 uv run dbt test --profiles-dir . --target prod
 ```
+
+**Windows (PowerShell):** Set `PROD_DB_*` env vars, then run `.\scripts\deploy.ps1`. The
+script runs the raw-table run-operations, deps, seed, run, and test. Use
+`.\scripts\deploy.ps1 -FullRefresh` for a full refresh.
 
 This is safe to run repeatedly. Seeds use `INSERT` by default and marts tables are
 replaced atomically (`CREATE OR REPLACE` / `DROP + CREATE` within a transaction).
@@ -240,6 +293,8 @@ This generates compiled SQL in `target/compiled/` for review.
 ## Working with Data
 
 The `analyses/` folder contains pre-built SQL queries for data quality and governance tasks.
+
+**Marts schema reference for applications:** `docs/marts_schema.json` describes all marts tables (columns, types, nullability, enums, primary/unique keys, and foreign keys). Use it for API contracts, code generation, or documentation. Tables live in the dbt target schema (e.g. `skills`).
 Compile them with:
 
 ```bash
