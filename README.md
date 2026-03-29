@@ -36,8 +36,18 @@ Current sources in scope:
 5. Install dbt packages:
    ```bash
    uv run dbt deps --profiles-dir .
+
+6. Create raw tables:
+   ```bash
+   uv run dbt run-operation create_lightcast_raw_tables --profiles-dir .
+   uv run dbt run-operation create_mind_raw_tables --profiles-dir .
+
+7.import raw data  (see below)   
+   ```bash
+   uv run python scripts/load_lightcast.py --meta data/lightcast/import_meta.json
+   uv run python scripts/load_mind_ontology.py
    ```
-6. Run seeds + build + tests:
+7. Run seeds + build + tests:
 
    ```bash
    uv run dbt seed --profiles-dir .
@@ -73,8 +83,7 @@ Example:
 ### 2) Load into raw tables
 
 ```bash
-uv run python scripts/load_lightcast.py \
-  --meta data/lightcast/import_meta.json
+uv run python scripts/load_lightcast.py --meta data/lightcast/import_meta.json
 ```
 
 This creates a new import batch, stores versioned raw rows, and marks the batch as **current**.
